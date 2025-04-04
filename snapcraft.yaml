@@ -37,6 +37,7 @@ parts:
       - libproxy1-plugin-gsettings
       - libproxy1v5
       - libxcb-cursor0
+      - qt6-sql-plugins
 
     override-build: |
       craftctl default
@@ -44,12 +45,14 @@ parts:
       cp ./ubntai $SNAPCRAFT_PART_INSTALL/bin/ubntai
       echo "✅ Binary copied to bin/ubntai"
 
+
 apps:
   ubntai:
     command: bin/ubntai
     environment:
-      QT_QPA_PLATFORM_PLUGIN_PATH: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET/qt6/plugins/platforms  # ✅ Proper plugin path
-      QT_QPA_PLATFORM: offscreen  # Or 'xcb' if using X11
+      QT_QPA_PLATFORM_PLUGIN_PATH: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET/qt6/plugins/platforms
+      QT_PLUGIN_PATH: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET/qt6/plugins
+      QT_QPA_PLATFORM: offscreen  # or xcb
       LD_LIBRARY_PATH: $LD_LIBRARY_PATH:$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET/libproxy
     plugs:
       - desktop
