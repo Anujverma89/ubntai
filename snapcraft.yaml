@@ -37,6 +37,9 @@ parts:
       - libproxy1v5
       - libxcb-cursor0
       - libsqlite3-0  # SQLite runtime (required by the driver)
+      - qt6-base-plugins       # ← contains platform themes, styles, fonts
+      - qt6-style-plugins      # ← includes styles like Fusion, Breeze
+      - qt6-gtk-platformtheme
 
     override-build: |
       craftctl default
