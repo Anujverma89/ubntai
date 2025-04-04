@@ -11,7 +11,7 @@ confinement: strict
 parts:
   ubntai:
     plugin: cmake
-    source: https://github.com/Anujverma89/ubntai.git
+    source: .
 
     build-packages:
       - qt6-base-dev
