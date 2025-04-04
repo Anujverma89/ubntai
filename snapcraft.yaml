@@ -47,6 +47,11 @@ parts:
       cp ./ubntai $SNAPCRAFT_PART_INSTALL/bin/ubntai
       echo "✅ Binary copied to bin/ubntai"
 
+      craftctl default
+      mkdir -p $SNAPCRAFT_PART_INSTALL/usr/lib/$CRAFT_ARCH_TRIPLET/qt6/plugins/styles
+      cp /path/to/libqtfusionstyle.so $SNAPCRAFT_PART_INSTALL/usr/lib/$CRAFT_ARCH_TRIPLET/qt6/plugins/styles/
+      echo "✅ Fusion style plugin manually included"
+
       # ✅ Manually include QSQLITE plugin if it exists
       SQLITE_PLUGIN=$(find /usr/lib -name libqsqlite.so | head -n 1 || true)
       if [ -f "$SQLITE_PLUGIN" ]; then
