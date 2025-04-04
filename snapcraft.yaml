@@ -9,10 +9,11 @@ grade: stable
 confinement: strict
 
 parts:
-  Ubntai:
+  ubntai:
     plugin: cmake
     source: .
-    organize: bin/Ubntai
+    organize:
+      Ubntai: bin/ubntai
 
     build-packages:
       - qt6-base-dev
@@ -45,8 +46,8 @@ parts:
       - -DCMAKE_PREFIX_PATH=/usr/lib/x86_64-linux-gnu/cmake/Qt6
 
 apps:
-  Ubntai:
-    command: bin/Ubntai
+  ubntai:
+    command: bin/ubntai
     environment:
       LD_LIBRARY_PATH: $SNAP/usr/lib/x86_64-linux-gnu/libproxy:$LD_LIBRARY_PATH
     plugs:
