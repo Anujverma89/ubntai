@@ -45,6 +45,10 @@ parts:
       cp ./ubntai $SNAPCRAFT_PART_INSTALL/bin/ubntai
       echo "✅ Binary copied to bin/ubntai"
 
+      # ✅ Manually copy SQLite plugin from system Qt path
+      mkdir -p $SNAPCRAFT_PART_INSTALL/usr/lib/$CRAFT_ARCH_TRIPLET/qt6/plugins/sqldrivers
+      cp /usr/lib/$CRAFT_ARCH_TRIPLET/qt6/plugins/sqldrivers/libqsqlite.so $SNAPCRAFT_PART_INSTALL/usr/lib/$CRAFT_ARCH_TRIPLET/qt6/plugins/sqldrivers/
+      echo "✅ QSQLITE plugin manually copied"
 
 apps:
   ubntai:
