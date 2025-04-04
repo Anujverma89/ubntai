@@ -1,0 +1,19 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/icon _help about_.svg</file>
+        <file>icons/installation_icon.svg</file>
+        <file>icons/troubleShoot_icon.svg</file>
+        <file>icons/ubntai_icon.svg</file>
+        <file>icons/User Circle_.svg</file>
+    </qresource>
+    <qresource prefix="/logo">
+        <file>logo/logo.png</file>
+        <file>logo/logo_100.svg</file>
+        <file>logo/logo_50.png</file>
+        <file>icons/oops_image.webp</file>
+    </qresource>
+    <qresource prefix="/giffy">
+        <file>icons/loading.gif</file>
+        <file>icons/loading_gif.mp4</file>
+    </qresource>
+</RCC>
