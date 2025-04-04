@@ -60,7 +60,7 @@ apps:
     environment:
       QT_QPA_PLATFORM_PLUGIN_PATH: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET/qt6/plugins/platforms
       QT_PLUGIN_PATH: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET/qt6/plugins
-      QT_QPA_PLATFORM: offscreen
+      QT_QPA_PLATFORM: xcb
       LD_LIBRARY_PATH: $LD_LIBRARY_PATH:$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET/libproxy
     plugs:
       - desktop
