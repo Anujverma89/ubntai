@@ -13,7 +13,6 @@ parts:
     plugin: cmake
     source: .
 
-
     build-packages:
       - qt6-base-dev
       - qt6-base-dev-tools       # uic, moc needed for .ui files
@@ -36,6 +35,11 @@ parts:
       - libproxy1-plugin-gsettings
       - libproxy1v5
 
+    override-build: |
+      craftctl default
+      mkdir -p $SNAPCRAFT_PART_INSTALL/bin
+      cp ./ubntai $SNAPCRAFT_PART_INSTALL/bin/ubntai
+      echo "✅ Binary copied to bin/ubntai"
 
 apps:
   ubntai:
