@@ -363,7 +363,7 @@
           <string notr="true">background-color:#2D2D2D;</string>
          </property>
          <property name="currentIndex">
-          <number>1</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="user_page">
           <property name="sizePolicy">
@@ -524,7 +524,6 @@
                       <property name="font">
                        <font>
                         <pointsize>14</pointsize>
-                        <fontweight>Medium</fontweight>
                        </font>
                       </property>
                       <property name="text">
@@ -721,7 +720,6 @@
                       <property name="font">
                        <font>
                         <pointsize>14</pointsize>
-                        <fontweight>Medium</fontweight>
                        </font>
                       </property>
                       <property name="cursor">
