@@ -44,8 +44,6 @@ parts:
 
       # Qt6 plugin and theme packages
       - qt6-gtk-platformtheme
-      - qt6-style-plugins
-      - qt6-base-plugins  # includes platform themes/styles/fonts
       - qt6-qpa-plugins   # includes xcb
 
     override-build: |
