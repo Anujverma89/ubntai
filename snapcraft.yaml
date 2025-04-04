@@ -12,8 +12,7 @@ parts:
   ubntai:
     plugin: cmake
     source: .
-    organize:
-      Ubntai: bin/ubntai
+
 
     build-packages:
       - qt6-base-dev
@@ -37,19 +36,10 @@ parts:
       - libproxy1-plugin-gsettings
       - libproxy1v5
 
-    override-stage: |
-      snapcraftctl stage
-      mkdir -p $SNAPCRAFT_PART_INSTALL/usr/lib/x86_64-linux-gnu/libproxy
-      cp -v /usr/lib/x86_64-linux-gnu/libproxy/libpxbackend-1.0.so $SNAPCRAFT_PART_INSTALL/usr/lib/x86_64-linux-gnu/libproxy/
-
-    cmake-parameters:
-      - -DCMAKE_PREFIX_PATH=/usr/lib/x86_64-linux-gnu/cmake/Qt6
 
 apps:
   ubntai:
     command: bin/ubntai
-    environment:
-      LD_LIBRARY_PATH: $SNAP/usr/lib/x86_64-linux-gnu/libproxy:$LD_LIBRARY_PATH
     plugs:
       - desktop
       - desktop-legacy
