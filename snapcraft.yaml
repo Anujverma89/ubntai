@@ -23,6 +23,8 @@ parts:
       - libopengl-dev
       - libgl-dev
       - libxcb-cursor0
+      - libxcb-keysyms1-dev
+      - libxkbcommon-dev
 
     stage-packages:
       - libgl1
@@ -36,10 +38,15 @@ parts:
       - libproxy1-plugin-gsettings
       - libproxy1v5
       - libxcb-cursor0
-      - libsqlite3-0  # SQLite runtime (required by the driver)
-      - qt6-base-plugins       # ← contains platform themes, styles, fonts
-      - qt6-style-plugins      # ← includes styles like Fusion, Breeze
+      - libxcb-keysyms1
+      - libxkbcommon0
+      - libsqlite3-0
+
+      # Qt6 plugin and theme packages
       - qt6-gtk-platformtheme
+      - qt6-style-plugins
+      - qt6-base-plugins  # includes platform themes/styles/fonts
+      - qt6-qpa-plugins   # includes xcb
 
     override-build: |
       craftctl default
@@ -47,12 +54,17 @@ parts:
       cp ./ubntai $SNAPCRAFT_PART_INSTALL/bin/ubntai
       echo "✅ Binary copied to bin/ubntai"
 
-      craftctl default
-      mkdir -p $SNAPCRAFT_PART_INSTALL/usr/lib/$CRAFT_ARCH_TRIPLET/qt6/plugins/styles
-      cp /path/to/libqtfusionstyle.so $SNAPCRAFT_PART_INSTALL/usr/lib/$CRAFT_ARCH_TRIPLET/qt6/plugins/styles/
-      echo "✅ Fusion style plugin manually included"
+      # Ensure plugins like Fusion are manually included if necessary
+      FUSION_PLUGIN=$(find /usr/lib -name libqtfusionstyle.so | head -n 1 || true)
+      if [ -f "$FUSION_PLUGIN" ]; then
+        mkdir -p $SNAPCRAFT_PART_INSTALL/usr/lib/$CRAFT_ARCH_TRIPLET/qt6/plugins/styles
+        cp "$FUSION_PLUGIN" $SNAPCRAFT_PART_INSTALL/usr/lib/$CRAFT_ARCH_TRIPLET/qt6/plugins/styles/
+        echo "✅ Fusion style plugin manually included from $FUSION_PLUGIN"
+      else
+        echo "⚠️ Fusion style plugin not found"
+      fi
 
-      # ✅ Manually include QSQLITE plugin if it exists
+      # Ensure QSQLITE plugin is copied
       SQLITE_PLUGIN=$(find /usr/lib -name libqsqlite.so | head -n 1 || true)
       if [ -f "$SQLITE_PLUGIN" ]; then
         mkdir -p $SNAPCRAFT_PART_INSTALL/usr/lib/$CRAFT_ARCH_TRIPLET/qt6/plugins/sqldrivers
@@ -68,6 +80,7 @@ apps:
     environment:
       QT_QPA_PLATFORM_PLUGIN_PATH: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET/qt6/plugins/platforms
       QT_PLUGIN_PATH: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET/qt6/plugins
+      QT_QPA_PLATFORMTHEME: gtk3  # or qt6gtk2 if applicable
       QT_QPA_PLATFORM: xcb
       LD_LIBRARY_PATH: $LD_LIBRARY_PATH:$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET/libproxy
     plugs:
