@@ -1,17 +1,55 @@
 name: ubntai
-version: 0.0.1
-summary: No more hectic hours to troubleshoot errors, just ask and simply troubleshoot
+base: core24
+version: '0.0.1'
+summary: Ubuntu AI Assistant
 description: |
-  Ubntai is an AI-based Ubuntu Assistant that helps you learn Ubuntu, troubleshoot errors,
-  install packages, and manage dependencies with ease.
+  A smart assistant for Ubuntu users.
 
-base: core22
-confinement: devmode
-grade: devel
+grade: stable
+confinement: strict
+
+parts:
+  ubntai:
+    plugin: cmake
+    source: .
+    organize:
+      Ubntai: bin/ubntai
+
+    build-packages:
+      - qt6-base-dev
+      - qt6-base-dev-tools       # uic, moc needed for .ui files
+      - qt6-tools-dev
+      - qt6-multimedia-dev
+      - cmake
+      - g++
+      - libopengl-dev            # fixes WrapOpenGL not found
+      - libgl-dev                # OpenGL headers
+
+    stage-packages:
+      - libgl1
+      - libopengl0
+      - libqt6core6
+      - libqt6gui6
+      - libqt6network6
+      - libqt6sql6
+      - libqt6widgets6
+      - qt6-image-formats-plugins  # if you're using image resources
+      - libproxy1-plugin-gsettings
+      - libproxy1v5
+
+    override-stage: |
+      snapcraftctl stage
+      mkdir -p $SNAPCRAFT_PART_INSTALL/usr/lib/x86_64-linux-gnu/libproxy
+      cp -v /usr/lib/x86_64-linux-gnu/libproxy/libpxbackend-1.0.so $SNAPCRAFT_PART_INSTALL/usr/lib/x86_64-linux-gnu/libproxy/
+
+    cmake-parameters:
+      - -DCMAKE_PREFIX_PATH=/usr/lib/x86_64-linux-gnu/cmake/Qt6
 
 apps:
   ubntai:
-    command: usr/local/bin/ubntai
+    command: bin/ubntai
+    environment:
+      LD_LIBRARY_PATH: $SNAP/usr/lib/x86_64-linux-gnu/libproxy:$LD_LIBRARY_PATH
     plugs:
       - desktop
       - desktop-legacy
@@ -19,22 +57,3 @@ apps:
       - x11
       - home
       - network
-
-parts:
-  ubntai:
-    plugin: cmake
-    source: .
-    build-packages:
-        - qt6-base-dev
-        - qt6-multimedia-dev
-        - qt6-tools-dev
-        - cmake
-        - g++
-    stage-packages:
-        - libqt6core6
-        - libqt6gui6
-        - libqt6widgets6
-        - libqt6network6
-    cmake-parameters:
-        - -DCMAKE_PREFIX_PATH=/usr/lib/x86_64-linux-gnu/cmake/Qt6
-

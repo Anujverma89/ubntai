@@ -17,6 +17,7 @@ find_package(Qt6 COMPONENTS Multimedia REQUIRED)
 
 
 
+
 set(PROJECT_SOURCES
         main.cpp
         mainwindow.cpp
@@ -44,7 +45,10 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         loading.h loading.cpp
         snapcraft.yaml
 
-
+        main.cpp
+        mainwindow.cpp
+        mainwindow.h
+        mainwindow.ui
 
 
     )
@@ -70,6 +74,8 @@ target_link_libraries(Ubntai PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(Ubntai PRIVATE Qt6::Network)
 target_link_libraries(Ubntai PRIVATE Qt6::Multimedia)
 target_link_libraries(Ubntai PRIVATE Qt6::Sql)
+target_link_libraries(Ubntai PRIVATE Qt6::Widgets)
+
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
