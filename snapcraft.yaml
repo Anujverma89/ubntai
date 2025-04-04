@@ -33,11 +33,10 @@ parts:
       - libqt6sql6
       - libqt6widgets6
       - qt6-image-formats-plugins
-      # ✅ This is the key package with platform plugins like 'offscreen'
       - libproxy1-plugin-gsettings
       - libproxy1v5
       - libxcb-cursor0
-      - qt6-sql-plugins
+      - libsqlite3-0  # SQLite runtime (required by the driver)
 
     override-build: |
       craftctl default
@@ -45,10 +44,15 @@ parts:
       cp ./ubntai $SNAPCRAFT_PART_INSTALL/bin/ubntai
       echo "✅ Binary copied to bin/ubntai"
 
-      # ✅ Manually copy SQLite plugin from system Qt path
-      mkdir -p $SNAPCRAFT_PART_INSTALL/usr/lib/$CRAFT_ARCH_TRIPLET/qt6/plugins/sqldrivers
-      cp /usr/lib/$CRAFT_ARCH_TRIPLET/qt6/plugins/sqldrivers/libqsqlite.so $SNAPCRAFT_PART_INSTALL/usr/lib/$CRAFT_ARCH_TRIPLET/qt6/plugins/sqldrivers/
-      echo "✅ QSQLITE plugin manually copied"
+      # ✅ Manually include QSQLITE plugin if it exists
+      SQLITE_PLUGIN=$(find /usr/lib -name libqsqlite.so | head -n 1 || true)
+      if [ -f "$SQLITE_PLUGIN" ]; then
+        mkdir -p $SNAPCRAFT_PART_INSTALL/usr/lib/$CRAFT_ARCH_TRIPLET/qt6/plugins/sqldrivers
+        cp "$SQLITE_PLUGIN" $SNAPCRAFT_PART_INSTALL/usr/lib/$CRAFT_ARCH_TRIPLET/qt6/plugins/sqldrivers/
+        echo "✅ QSQLITE plugin copied from $SQLITE_PLUGIN"
+      else
+        echo "❌ Could not find libqsqlite.so — SQLite plugin may not load"
+      fi
 
 apps:
   ubntai:
@@ -56,7 +60,7 @@ apps:
     environment:
       QT_QPA_PLATFORM_PLUGIN_PATH: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET/qt6/plugins/platforms
       QT_PLUGIN_PATH: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET/qt6/plugins
-      QT_QPA_PLATFORM: offscreen  # or xcb
+      QT_QPA_PLATFORM: offscreen
       LD_LIBRARY_PATH: $LD_LIBRARY_PATH:$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET/libproxy
     plugs:
       - desktop
