@@ -27,11 +27,7 @@ parts:
     build-packages:
         - qt6-base-dev
         - qt6-multimedia-dev
-        - qt6-network-dev
-        - qt6-sql-dev
-        - qt6-widgets-dev
         - qt6-tools-dev
-        - qt6-tools-dev-tools
         - cmake
         - g++
     stage-packages:
