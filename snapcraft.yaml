@@ -1,0 +1,36 @@
+name: ubntai
+version: 0.0.1
+summary: No more hectic hours to troubleshoot errors, just ask and simply troubleshoot
+description: |
+  Ubntai is an AI-based Ubuntu Assistant that helps you learn Ubuntu, troubleshoot errors,
+  install packages, and manage dependencies with ease.
+
+base: core22
+confinement: devmode
+grade: devel
+
+apps:
+  ubntai:
+    command: usr/local/bin/ubntai
+    plugs:
+      - desktop
+      - desktop-legacy
+      - wayland
+      - x11
+      - home
+      - network
+
+parts:
+  ubntai:
+    plugin: cmake
+    source: .
+    build-packages:
+      - qtbase5-dev
+      - qtchooser
+      - qt5-qmake
+      - qtbase5-dev-tools
+    stage-packages:
+      - libqt5core5a
+      - libqt5gui5
+      - libqt5widgets5
+      - libqt5network5

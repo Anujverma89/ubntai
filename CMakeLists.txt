@@ -42,6 +42,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         db.h db.cpp
         pastqueries.h pastqueries.cpp
         loading.h loading.cpp
+        snapcraft.yaml
 
 
 
