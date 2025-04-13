@@ -88,3 +88,4 @@ apps:
       - x11
       - home
       - network
+    extension: [desktop-qt6]
