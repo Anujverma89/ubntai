@@ -101,6 +101,12 @@
           </property>
           <item>
            <widget class="QWidget" name="top_nav" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <layout class="QVBoxLayout" name="verticalLayout">
              <property name="spacing">
               <number>10</number>
@@ -276,6 +282,9 @@
                <property name="orientation">
                 <enum>Qt::Orientation::Vertical</enum>
                </property>
+               <property name="sizeType">
+                <enum>QSizePolicy::Policy::Minimum</enum>
+               </property>
                <property name="sizeHint" stdset="0">
                 <size>
                  <width>20</width>
@@ -285,6 +294,10 @@
               </spacer>
              </item>
             </layout>
+            <zorder>logoframe</zorder>
+            <zorder>ubntai_button</zorder>
+            <zorder>troubleshoot_button</zorder>
+            <zorder>installation_button</zorder>
            </widget>
           </item>
           <item>
@@ -1393,8 +1406,8 @@
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>512</width>
-                         <height>284</height>
+                         <width>98</width>
+                         <height>28</height>
                         </rect>
                        </property>
                       </widget>
