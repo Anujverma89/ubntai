@@ -400,7 +400,7 @@
           <string notr="true">background-color:#2D2D2D;</string>
          </property>
          <property name="currentIndex">
-          <number>0</number>
+          <number>4</number>
          </property>
          <widget class="QWidget" name="user_page">
           <property name="sizePolicy">
@@ -2133,7 +2133,7 @@
                     <string notr="true">border-bottom:0px solid #A4A4A4;</string>
                    </property>
                    <property name="text">
-                    <string>Version 1.0.0</string>
+                    <string>Version 0.0.1</string>
                    </property>
                    <property name="indent">
                     <number>0</number>
