@@ -400,7 +400,7 @@
           <string notr="true">background-color:#2D2D2D;</string>
          </property>
          <property name="currentIndex">
-          <number>4</number>
+          <number>3</number>
          </property>
          <widget class="QWidget" name="user_page">
           <property name="sizePolicy">
@@ -1384,8 +1384,8 @@
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>512</width>
-                         <height>284</height>
+                         <width>98</width>
+                         <height>28</height>
                         </rect>
                        </property>
                       </widget>
@@ -1920,7 +1920,7 @@
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_32">
               <property name="leftMargin">
-               <number>50</number>
+               <number>0</number>
               </property>
               <property name="topMargin">
                <number>0</number>

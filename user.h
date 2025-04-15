@@ -12,6 +12,7 @@
 #include <QSqlQuery>
 #include <QSqlError>
 
+// this file is responsible for dealing with user creation , updating users and managing avatar
 
 class User : public QObject
 {

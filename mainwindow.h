@@ -35,6 +35,8 @@ private slots:
 
     void on_pastQueries_clicked();
 
+    void on_starttroubleshootbutton_clicked();
+
 private:
     Ui::MainWindow *ui;
 

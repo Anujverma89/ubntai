@@ -49,6 +49,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         mainwindow.cpp
         mainwindow.h
         mainwindow.ui
+        README.md
+        troubleshoot.h troubleshoot.cpp
 
 
     )

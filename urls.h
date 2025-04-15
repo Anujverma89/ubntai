@@ -2,6 +2,9 @@
 #define URLS_H
 #include <QString>
 
+// This file is respnsible for changing the urls whenever needed
+
+
 class urls
 {
 public:

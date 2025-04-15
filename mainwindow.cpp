@@ -19,7 +19,7 @@
 #include "pastqueries.h"
 #include <QProgressBar>
 #include "loading.h"
-
+#include "troubleshoot.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -132,7 +132,7 @@ void MainWindow::on_queryButton_clicked()
     QString innertext = ui->queryBox->text();
     ui->questionBox->setText(innertext);
     Loading *loader = new Loading();
-    loader->startLoading("Making request, Please Wait !!");
+    loader->startLoading(this, "Making request, Please Wait !!");
     Asistant *asistant = new Asistant(ui);
     asistant->makeRequest(ui);
 }
@@ -218,5 +218,11 @@ void MainWindow::on_pastQueries_clicked()
 {
     Pastqueries *pastqueries = new Pastqueries(nullptr,ui);
     pastqueries->show();
+}
+
+
+void MainWindow::on_starttroubleshootbutton_clicked()
+{
+    Troubleshoot::startTroubleShoot(this);
 }
 

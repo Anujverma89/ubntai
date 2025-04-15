@@ -9,8 +9,8 @@ Loading::Loading(){};
 QDialog* Loading::dialog = nullptr;
 
 
-void Loading::startLoading(QString context){
-    dialog = new QDialog();
+void Loading::startLoading(QWidget *parent, QString context){
+    dialog = new QDialog(parent);
     QFrame *mainFrame = new QFrame();
     QVBoxLayout *layout = new QVBoxLayout(mainFrame);
 
@@ -23,19 +23,20 @@ void Loading::startLoading(QString context){
     giffy->start();
 
     QLabel *text = new QLabel(context);
-    //text->setAlignment(Qt::AlignCenter);
     text->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
     text->setStyleSheet("font-weight:bold; font-size:16px");
     loadingLabel->setContentsMargins(0,0,0,10);
+
     layout->addWidget(loadingLabel);
     layout->addWidget(text);
 
 
 
-    this->dialog->setLayout(layout);
-    this->dialog->setWindowTitle("Loading ...");
-    this->dialog->resize(300,110);
-    this->dialog->show();
+    dialog->setLayout(layout);
+    dialog->setWindowTitle("Loading ...");
+    dialog->setModal(true);
+    dialog->resize(300,110);
+    dialog->show();
 };
 
 Loading::~Loading(){

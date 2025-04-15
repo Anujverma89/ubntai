@@ -7,6 +7,8 @@
 #include <QCloseEvent>
 
 
+// this file is responsible for working with past quereis made by user
+
 class Pastqueries : public QDialog
 {
     Q_OBJECT;

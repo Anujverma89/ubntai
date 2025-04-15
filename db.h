@@ -3,7 +3,7 @@
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QSqlError>
-
+// Deals with database related tasks
 class Db
 {
 public:

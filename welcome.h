@@ -5,6 +5,9 @@
 #include <QNetworkReply>
 #include <QVBoxLayout>
 
+//this file basically does initialization of the app when it is installed for the first time in the system
+// feteches the already registered user or create new user if user doesnot exists
+
 class Welcome : public QDialog
 {
     Q_OBJECT;
