@@ -37,8 +37,12 @@ private slots:
 
     void on_starttroubleshootbutton_clicked();
 
+    void on_filterbox_currentIndexChanged(int index);
+
 private:
     Ui::MainWindow *ui;
+
+
 
 };
 #endif // MAINWINDOW_H

@@ -38,10 +38,56 @@ Ubuntu AI Assistant is your smart Linux companion, making troubleshooting and so
 * ~/.var/app/<app>/ for flatpack applications
 
 
-
 # Add more feature : 
 * Allow to see Failed login attems 
 * Allow to see all the ports using net 
 * Allow to see all the active ports in the system along with application name
 
 
+
+# How Installation module will work : 
+* User can search for any app 
+* We will show where it is availalbe
+* User can install by clicking over that app
+### Snap packages : 
+a) They have everything required to run inside them.
+b) They include all dependencies.
+c) So install directly using app 
+### APT : 
+### AppImage : 
+* Runs on any linux distribution irrespective of the distribution.
+* Download app from app image . 
+* Make it executable and run the script ./app.appimage
+* We won't facilitate app image because they are not centralized at one place.
+### Ubuntu software center (App Store) 
+### Flatpack 
+
+
+# Lets apt : 
+* It is a CLI frontend 
+
+### Flow of installation package : 
+* User Searches for package 
+* Find the package
+* See's where it is available 
+* Now when use clicks on install/uninstall/ 
+    * Open terminal behind the scenes.
+    * Run the command on behalf of the user.
+    * Shows the status.
+
+
+* Reading installed applications
+* applications installed using snap from /snap folder 
+* 
+
+
+# Checking for packages : 
+* Binary Executables & System utilities : from usr/bin & /usr/sbin
+* Applications : /snap,  /var/lib/flatpak/, 
+* Libraries : /lib, /usr/lib / usr/share
+
+
+# Types of files present in log folder : 
+1) directory / can be found using isDir() return ture if dir()
+2) .gz / to work on /
+3) Log files / can be read easily 0 / can be found using isFile(); return true if file

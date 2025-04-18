@@ -10,12 +10,15 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
-find_package(Qt6 REQUIRED COMPONENTS Network)
-find_package(Qt6 REQUIRED COMPONENTS Sql)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
-find_package(Qt6 COMPONENTS Multimedia REQUIRED)
 
-
+# Core Qt components
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS
+    Widgets
+    Network
+    Sql
+    Multimedia
+    Concurrent
+)
 
 
 set(PROJECT_SOURCES
@@ -51,6 +54,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         mainwindow.ui
         README.md
         troubleshoot.h troubleshoot.cpp
+        installation.h installation.cpp
+        flowlayout.h flowlayout.cpp
 
 
     )
@@ -72,11 +77,14 @@ else()
     endif()
 endif()
 
-target_link_libraries(ubntai PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
-target_link_libraries(ubntai PRIVATE Qt6::Network)
-target_link_libraries(ubntai PRIVATE Qt6::Multimedia)
-target_link_libraries(ubntai PRIVATE Qt6::Sql)
-target_link_libraries(ubntai PRIVATE Qt6::Widgets)
+# Link all required Qt modules to your target
+target_link_libraries(ubntai PRIVATE
+    Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::Network
+    Qt${QT_VERSION_MAJOR}::Multimedia
+    Qt${QT_VERSION_MAJOR}::Sql
+    Qt${QT_VERSION_MAJOR}::Concurrent
+)
 
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

@@ -20,12 +20,16 @@
 #include <QProgressBar>
 #include "loading.h"
 #include "troubleshoot.h"
+#include "installation.h"
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    Troubleshoot dummyt1(ui);
 
     Db db;
     db.initializeDatabase();
@@ -163,7 +167,6 @@ void MainWindow::on_comboBox_currentIndexChanged(int index)
             ui->informationText->setText(ip);
         }
 
-
     }else if(index == 2){
 
     }else{
@@ -182,6 +185,7 @@ void MainWindow::on_ubntai_button_clicked()
 void MainWindow::on_installation_button_clicked()
 {
     ui->stackedWidget->setCurrentIndex(2);
+    Installation::showInstalledApps(ui);
 }
 
 
@@ -224,5 +228,11 @@ void MainWindow::on_pastQueries_clicked()
 void MainWindow::on_starttroubleshootbutton_clicked()
 {
     Troubleshoot::startTroubleShoot(this);
+}
+
+
+void MainWindow::on_filterbox_currentIndexChanged(int index)
+{
+    Installation::showInstalledApps(ui);
 }
 
