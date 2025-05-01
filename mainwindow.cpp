@@ -213,7 +213,22 @@ void MainWindow::on_about_button_clicked()
 }
 
 
+// void MainWindow::on_findpackagebutton_clicked()
+// {
+//     QString searchText = ui->searchpackageinput->text();
+//     // QMessageBox::StandardButton reply;
+//     // reply = QMessageBox::question(this, "Install Package",
+//     //                               "Do you want to install this package?",
+//     //                               QMessageBox::Yes | QMessageBox::No);
+//     // if (reply == QMessageBox::Yes) {
+//     //     // Use QProcess to run install command
+//     //     QProcess::execute("pkexec", QStringList() << "apt" << "install" << "-y" << "vlc");
+//     // } else {
+//     //     QMessageBox::information(this, "Cancelled", "Installation cancelled.");
+//     // }
 
+
+// }
 
 
 
@@ -235,4 +250,25 @@ void MainWindow::on_filterbox_currentIndexChanged(int index)
 {
     Installation::showInstalledApps(ui);
 }
+
+
+
+
+// searching for packages when the find button is clicked
+void MainWindow::on_findpackagebutton_clicked()
+{
+    QString searchText = ui->searchpackageinput->text();
+
+    QProcess process;
+    process.start("apt-cache", QStringList() << "search" << searchText);
+    process.waitForFinished();
+
+    QString output = process.readAllStandardOutput();
+    QStringList results = output.split('\n', Qt::SkipEmptyParts);
+
+    // Now display results in a custom dialog
+    Installation::showResultsDialog(results);
+}
+
+
 

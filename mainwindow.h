@@ -16,6 +16,7 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    // void showResultsDialog(const QStringList &packages);
 
 private slots:
     void updateUI(QStringList links);
@@ -38,6 +39,8 @@ private slots:
     void on_starttroubleshootbutton_clicked();
 
     void on_filterbox_currentIndexChanged(int index);
+
+    void on_findpackagebutton_clicked();
 
 private:
     Ui::MainWindow *ui;

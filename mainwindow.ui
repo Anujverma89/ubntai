@@ -400,7 +400,7 @@
           <string notr="true">background-color:#2D2D2D;</string>
          </property>
          <property name="currentIndex">
-          <number>3</number>
+          <number>2</number>
          </property>
          <widget class="QWidget" name="user_page">
           <property name="sizePolicy">
@@ -1384,8 +1384,8 @@
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>48</width>
-                         <height>16</height>
+                         <width>98</width>
+                         <height>28</height>
                         </rect>
                        </property>
                       </widget>

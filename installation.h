@@ -8,12 +8,16 @@
 #include <QVBoxLayout>
 #include <QFrame>
 #include <QLabel>
+#include <QDialog>
+#include <QMessageBox>
+#include <QProcess>
 
 class Installation : QObject
 {
     Q_OBJECT;
 public:
     Installation();
+    static void showResultsDialog(const QStringList &packages);
     static void showInstalledApps(Ui::MainWindow *ui);
 };
 

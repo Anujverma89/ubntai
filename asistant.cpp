@@ -18,6 +18,7 @@ Asistant::~Asistant(){
 void Asistant::makeRequest(Ui::MainWindow *ui) {
     QNetworkAccessManager *manager = new QNetworkAccessManager(this);
     connect(manager, &QNetworkAccessManager::finished, this, &Asistant::handleResponse);
+
     QLabel *textdata =  new QLabel("");
     this->ui->queryBox->setText("");
     this->ui->scrollArea->setWidget(textdata);
@@ -53,12 +54,16 @@ void Asistant::makeRequest(Ui::MainWindow *ui) {
     manager->post(request, jsonData);
 }
 
+
+
+
 void Asistant::handleResponse(QNetworkReply *reply) {
 
     if (reply->error() == QNetworkReply::NoError) {
-        // closing the window after query successfull
+        // Close the loading dialog
         Loading *loader = new Loading();
         loader->closeDialog();
+
         QByteArray responseData = reply->readAll();
         QJsonDocument doc = QJsonDocument::fromJson(responseData);
 
@@ -73,12 +78,47 @@ void Asistant::handleResponse(QNetworkReply *reply) {
 
                 if (!parts.isEmpty()) {
                     QString text = parts[0].toObject()["text"].toString();
-                    QLabel *textdata =  new QLabel(text);
+
+                    // Convert **bold** markdown to <b>bold</b> HTML
+                    QString htmlText = text;
+                    htmlText.replace("**", "<b>");
+                    bool toggle = true;
+                    int pos = 0;
+                    while ((pos = htmlText.indexOf("<b>", pos)) != -1) {
+                        if (toggle) {
+                            pos += 3; // skip past <b>
+                        } else {
+                            htmlText.replace(pos, 3, "</b>");
+                            pos += 4;
+                        }
+                        toggle = !toggle;
+                    }
+
+                    // Preserve line breaks by replacing '\n' with <br>
+                    htmlText.replace("\n", "<br>");
+
+                    // Create QLabel with styling
+                    QLabel *textData = new QLabel();
+                    textData->setTextFormat(Qt::RichText);
+                    textData->setText(htmlText);
+                    textData->setWordWrap(true);
+                    textData->setStyleSheet(
+                        "QLabel {"
+                        "   font-size: 14px;"
+                        "   color: white;"
+                        "   background-color: #2e2e2e;"
+                        "   padding: 12px;"
+                        "   border-radius: 8px;"
+                        "}"
+                        );
+
+                    // Set to scroll area
+                    this->ui->scrollArea->setWidget(textData);
+
+                    // Save query
                     QString question = this->ui->questionBox->text();
                     QString userId = this->ui->userId->text();
-                    this->ui->scrollArea->setWidget(textdata);
                     saveQuery(question, userId, responseData);
-                    qDebug() << text;
                 }
             }
         }
@@ -87,6 +127,7 @@ void Asistant::handleResponse(QNetworkReply *reply) {
         qDebug() << "Error: " << reply->errorString();
         qDebug() << "Response: " << reply->readAll();
     }
+
     reply->deleteLater();
 }
 

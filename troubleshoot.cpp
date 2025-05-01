@@ -152,6 +152,11 @@ void Troubleshoot::populateError(QString errorstring) {
 
     // Troubleshoot button with styling
     QPushButton *troubleshootBtn = new QPushButton("Troubleshoot");
+
+    QObject::connect(troubleshootBtn, &QPushButton::clicked, [=]() {
+        Troubleshoot::callGeminiAPI(errorstring);
+    });
+
     troubleshootBtn->setMaximumWidth(120);
     troubleshootBtn->setStyleSheet(
         "QPushButton {"
@@ -180,6 +185,173 @@ void Troubleshoot::populateError(QString errorstring) {
 }
 
 
+
+
+
+
+void Troubleshoot::callGeminiAPI(const QString &errorText) {
+    Loading *troubleshootloader = new Loading();
+    troubleshootloader->startLoading(nullptr,"Finding solution, Please wait !!");
+
+
+    QNetworkAccessManager *manager = new QNetworkAccessManager();
+
+    QString apiKey = "AIzaSyBpvVYplRkFV3-XzQ0kfUnCYRnfyxIAVXM";
+    QString geminiUrl = QString("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=%1").arg(apiKey);
+
+    QNetworkRequest request(geminiUrl);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+
+    // Correct JSON structure
+    QString combinedText = QString(
+        "This error log contains a problem. I want you to give me three things strictly :\n"
+            "1) Cause\n"
+            "2) Solution\n"
+            "3) Version in which the solution is applicable\n"
+            "Return the result in JSON format only.\n\n"
+            "Error: %1"
+    ).arg(errorText);
+
+    QJsonObject textPart;
+    textPart["text"] = combinedText;
+
+
+    QJsonArray partsArray;
+    partsArray.append(textPart);
+
+    QJsonObject contentObject;
+    contentObject["parts"] = partsArray;
+
+    QJsonArray contentsArray;
+    contentsArray.append(contentObject);
+
+    QJsonObject json;
+    json["contents"] = contentsArray;
+
+    QJsonDocument jsonDoc(json);
+    QByteArray jsonData = jsonDoc.toJson();
+
+    // manager->post(request, jsonData);
+
+    QNetworkReply *reply = manager->post(request, jsonData);
+    QObject::connect(reply, &QNetworkReply::finished, [reply, troubleshootloader]() {
+        if (reply->error() == QNetworkReply::NoError) {
+            QByteArray response = reply->readAll();
+            QJsonDocument responseDoc = QJsonDocument::fromJson(response);
+
+            QString text = "";
+            QJsonArray candidates = responseDoc["candidates"].toArray();
+            if (!candidates.isEmpty()) {
+                QJsonArray parts = candidates[0].toObject()["content"].toObject()["parts"].toArray();
+                if (!parts.isEmpty()) {
+                    text = parts[0].toObject()["text"].toString();
+                }
+            }
+
+            QStringList jsonText = text.split("\n");
+
+            // Print the raw Gemini response as plain text
+            // qDebug().noquote()<<jsonText[1];
+            // qDebug()<< "Gemini Response:\n" << jsonText;
+            troubleshootloader->closeDialog();
+            populateErrorResponse(jsonText[2],jsonText[3],jsonText[4]);
+        } else {
+            qDebug() << "Error calling Gemini API:" << reply->errorString();
+            troubleshootloader->closeDialog();
+        }
+        reply->deleteLater();
+    });
+
+
+}
+
+void Troubleshoot::populateErrorResponse(const QString &cause, const QString &solution, const QString &version) {
+    // Create a new dialog window
+    QDialog *errorDialog = new QDialog();
+    errorDialog->setWindowTitle("Error Resolution Details");
+
+    // Set dark background color for the dialog
+    errorDialog->setStyleSheet("background-color: #2b2b2b;");
+
+    // Set up the layout for the dialog
+    QVBoxLayout *layout = new QVBoxLayout();
+    layout->setSpacing(15);  // Add space between widgets
+    layout->setContentsMargins(20, 20, 20, 20);  // Add margins
+
+    // Create and style section headers
+    QLabel *causeHeader = new QLabel("Cause:");
+    QLabel *solutionHeader = new QLabel("Solution:");
+    QLabel *versionHeader = new QLabel("Version:");
+
+    QString headerStyle = "font-weight: bold; font-size: 15px; color: #ffd700;"; // golden yellow for headings
+    causeHeader->setStyleSheet(headerStyle);
+    solutionHeader->setStyleSheet(headerStyle);
+    versionHeader->setStyleSheet(headerStyle);
+
+    // Create labels for cause, solution, and version
+    QLabel *causeLabel = new QLabel(cause);
+    QLabel *solutionLabel = new QLabel(solution);
+    QLabel *versionLabel = new QLabel(version);
+
+    // Set word wrap and text styling
+    QString labelStyle = "font-size: 14px; color: white;";
+    causeLabel->setWordWrap(true);
+    causeLabel->setStyleSheet(labelStyle);
+    solutionLabel->setWordWrap(true);
+    solutionLabel->setStyleSheet(labelStyle);
+    versionLabel->setWordWrap(true);
+    versionLabel->setStyleSheet(labelStyle);
+
+    // Add each section to the layout
+    layout->addWidget(causeHeader);
+    layout->addWidget(causeLabel);
+    layout->addSpacing(10);
+    layout->addWidget(solutionHeader);
+    layout->addWidget(solutionLabel);
+    layout->addSpacing(10);
+    layout->addWidget(versionHeader);
+    layout->addWidget(versionLabel);
+    layout->addSpacing(15);
+
+    // Add a question prompt
+    // QLabel *questionLabel = new QLabel("Would you like us to do the same for you?");
+    // questionLabel->setStyleSheet("font-size: 14px; color: #ffffff;");
+    // layout->addWidget(questionLabel);
+
+    // 'Proceed' button
+    QPushButton *proceedButton = new QPushButton("Ok");
+    proceedButton->setStyleSheet(
+        "QPushButton {"
+        "    color: white;"
+        "    background-color: #444444;"
+        "    border-radius: 4px;"
+        "    padding: 8px 10px;"
+        "}"
+        "QPushButton:hover {"
+        "    background-color: #5a5a5a;"
+        "}"
+        );
+
+    QObject::connect(proceedButton, &QPushButton::clicked, [=]() {
+        errorDialog->close();
+    });
+
+    layout->addWidget(proceedButton);
+
+    // Set layout and display dialog
+    errorDialog->setLayout(layout);
+    errorDialog->exec();
+}
+
+
+
+
+
+
+
+
 void Troubleshoot::closeReading(){
     dialog->close();
 }
+
+

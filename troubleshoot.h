@@ -16,6 +16,15 @@
 #include <QDebug>
 #include <QApplication>
 #include "ui_mainwindow.h"
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QRegularExpression>
+#include "loading.h"
+
+
 extern Ui::MainWindow *usefului;
 
 // this file is particularly responsible for reading erros and logs and displaying them in the troubleshoot section
@@ -33,6 +42,10 @@ public:
     static void closeReading();
     static void readFileContent(QString filePath);
     static void populateError(QString errorstring = " ");
+    static void callGeminiAPI(const QString &errorText);
+    static void populateErrorResponse(const QString &cause, const QString &solution, const QString &version);
+
+
 
 private:
     static QDialog* dialog;
