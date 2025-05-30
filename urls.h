@@ -17,6 +17,10 @@ public:
     static const QString saveQuery;
     static const QString getPastQuery;
     static const QString deletePastQuery;
+    static const QString troubleShoot;
+    static const QString askQuestion;
+    static const QString adderrorreport;
+    static const QString addapplicationinfo;
 };
 
 #endif // URLS_H

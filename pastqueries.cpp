@@ -14,6 +14,7 @@
 qint64 Pastqueries::page = 0 ;
 QLineEdit* Pastqueries::pageno = nullptr;
 
+
 Pastqueries::Pastqueries(QWidget *parent, Ui::MainWindow *ui){
     this->ui=ui;
 
@@ -169,59 +170,134 @@ void Pastqueries::decreasePageQuery(){
 
 
 
+// void Pastqueries::handleGetPastQueryReply(QNetworkReply *reply){
+//     if(reply->error() == QNetworkReply::NoError){
+//         // increasing the page by one on each request
+//         while (QLayoutItem *item = queryContainer->takeAt(0)) {
+//             if (QWidget *widget = item->widget()) {
+//                 widget->deleteLater();  // Delete widget safely
+//             }
+//             delete item;  // Delete the layout item
+//         }
+//         pageno->setText(QString::number(Pastqueries::page));
+//         // setting page no in UI
+//         QByteArray data = reply->readAll();
+//         QJsonDocument doc = QJsonDocument::fromJson(data);
+//         if (doc.isArray()) {
+//             QJsonArray array = doc.array();
+
+//             if(array.size() < 10){
+//                 this->right->setDisabled(true);
+//             }
+
+//             for (const QJsonValue &value : array) {
+//                 QJsonObject obj = value.toObject();
+//                 QString quesitiontext =  obj["question"].toString();
+//                 QFrame *queryFrame = new QFrame();
+//                 QHBoxLayout *queryLayout = new QHBoxLayout(queryFrame);
+//                 QLabel *question = new QLabel(quesitiontext);
+//                 queryFrame->setContentsMargins(0,0,0,0);
+//                 QPushButton *showQuery = new QPushButton("Delete");
+//                 showQuery->setStyleSheet("height:30px;width:100px");
+//                 queryLayout->addWidget(question);
+//                 queryLayout->addWidget(showQuery);
+//                 queryFrame->setStyleSheet("background-color:#2d2d2d");
+//                 this->queryContainer->addWidget(queryFrame);
+//             }
+//         } else if (doc.isObject()) {
+//             QJsonObject obj = doc.object();
+//             QString quesitiontext =  obj["question"].toString();
+//             QFrame *queryFrame = new QFrame();
+//             QHBoxLayout *queryLayout = new QHBoxLayout(queryFrame);
+//             QLabel *question = new QLabel(quesitiontext);
+//             QPushButton *showQuery = new QPushButton("Delete");
+//             showQuery->setStyleSheet("height:30px;width:100px");
+//             queryLayout->addWidget(question);
+//             queryLayout->addWidget(showQuery);
+//             queryFrame->setStyleSheet("background-color:#333333");
+//             this->queryContainer->addWidget(queryFrame);
+//         }
+
+//     }else{
+//         qDebug()<<reply->errorString();
+//         qDebug()<<reply->readAll();
+//     }
+// };
+
 void Pastqueries::handleGetPastQueryReply(QNetworkReply *reply){
-    if(reply->error() == QNetworkReply::NoError){
-        // increasing the page by one on each request
+    if (reply->error() == QNetworkReply::NoError) {
+        // Clear existing items
         while (QLayoutItem *item = queryContainer->takeAt(0)) {
             if (QWidget *widget = item->widget()) {
-                widget->deleteLater();  // Delete widget safely
+                widget->deleteLater();
             }
-            delete item;  // Delete the layout item
+            delete item;
         }
+
         pageno->setText(QString::number(Pastqueries::page));
-        // setting page no in UI
+
         QByteArray data = reply->readAll();
         QJsonDocument doc = QJsonDocument::fromJson(data);
+
+        auto createQueryItem = [&](QString questionText) {
+            QFrame *queryFrame = new QFrame();
+            QHBoxLayout *queryLayout = new QHBoxLayout(queryFrame);
+            QLabel *question = new QLabel(questionText);
+            QPushButton *deleteButton = new QPushButton("Delete");
+            deleteButton->setStyleSheet("height:30px;width:100px");
+            queryFrame->setContentsMargins(0, 0, 0, 0);
+            queryLayout->addWidget(question);
+            queryLayout->addWidget(deleteButton);
+            queryFrame->setStyleSheet("background-color:#2d2d2d");
+            this->queryContainer->addWidget(queryFrame);
+
+            // === Delete button handler ===
+            connect(deleteButton, &QPushButton::clicked, this, [=]() {
+                QUrl url(urls::deletePastQuery);
+                QNetworkRequest request(url);
+                request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+
+                QJsonObject payload;
+                payload["user_id"] = this->ui->userId->text();
+                payload["question"] = questionText;
+
+                QJsonDocument doc(payload);
+                QNetworkAccessManager *manager = new QNetworkAccessManager(this);
+                QNetworkReply *deleteReply = manager->post(request, doc.toJson());
+
+                connect(deleteReply, &QNetworkReply::finished, this, [=]() {
+                    if (deleteReply->error() == QNetworkReply::NoError) {
+                        queryFrame->deleteLater();  // remove from UI
+                    } else {
+                        qDebug() << "Delete failed:" << deleteReply->errorString();
+                    }
+                    deleteReply->deleteLater();
+                    manager->deleteLater();
+                });
+            });
+        };
+
         if (doc.isArray()) {
             QJsonArray array = doc.array();
-
-            if(array.size() < 10){
+            if (array.size() < 10) {
                 this->right->setDisabled(true);
             }
-
             for (const QJsonValue &value : array) {
                 QJsonObject obj = value.toObject();
-                QString quesitiontext =  obj["question"].toString();
-                QFrame *queryFrame = new QFrame();
-                QHBoxLayout *queryLayout = new QHBoxLayout(queryFrame);
-                QLabel *question = new QLabel(quesitiontext);
-                queryFrame->setContentsMargins(0,0,0,0);
-                QPushButton *showQuery = new QPushButton("See More");
-                showQuery->setStyleSheet("height:30px;width:100px");
-                queryLayout->addWidget(question);
-                queryLayout->addWidget(showQuery);
-                queryFrame->setStyleSheet("background-color:#2d2d2d");
-                this->queryContainer->addWidget(queryFrame);
+                QString questionText = obj["question"].toString();
+                createQueryItem(questionText);
             }
         } else if (doc.isObject()) {
             QJsonObject obj = doc.object();
-            QString quesitiontext =  obj["question"].toString();
-            QFrame *queryFrame = new QFrame();
-            QHBoxLayout *queryLayout = new QHBoxLayout(queryFrame);
-            QLabel *question = new QLabel(quesitiontext);
-            QPushButton *showQuery = new QPushButton("See More");
-            showQuery->setStyleSheet("height:30px;width:100px");
-            queryLayout->addWidget(question);
-            queryLayout->addWidget(showQuery);
-            queryFrame->setStyleSheet("background-color:#333333");
-            this->queryContainer->addWidget(queryFrame);
+            QString questionText = obj["question"].toString();
+            createQueryItem(questionText);
         }
-
-    }else{
-        qDebug()<<reply->errorString();
-        qDebug()<<reply->readAll();
+    } else {
+        qDebug() << reply->errorString();
+        qDebug() << reply->readAll();
     }
-};
+}
+
 
 
 

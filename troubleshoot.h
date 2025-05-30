@@ -23,7 +23,7 @@
 #include <QJsonArray>
 #include <QRegularExpression>
 #include "loading.h"
-
+#include "urls.h"
 
 extern Ui::MainWindow *usefului;
 
@@ -45,9 +45,15 @@ public:
     static void callGeminiAPI(const QString &errorText);
     static void populateErrorResponse(const QString &cause, const QString &solution, const QString &version);
 
+// private slots:
+//     void sendReport();
+//     void onReportFinished(QNetworkReply* reply);
 
 
 private:
+    // QList<QJsonObject> m_errorRecords;
+    // QDateTime m_troubleshootTimestamp;
+    // QNetworkAccessManager* m_reportManager;
     static QDialog* dialog;
     static QString filename;
     static QProgressBar *progressbar;

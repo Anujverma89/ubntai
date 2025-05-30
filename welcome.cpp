@@ -72,6 +72,9 @@ Welcome::~Welcome(){
 }
 
 void Welcome::onNextButtonClicked(){
+    Loading *Loader = new Loading();
+    Loader->startLoading(nullptr,"Doing Initial Setup !!");
+
     QString email = this->email->text();
     QNetworkAccessManager *manager = new QNetworkAccessManager();
     connect(manager, &QNetworkAccessManager::finished, this, &Welcome::handleReply);
@@ -83,6 +86,7 @@ void Welcome::onNextButtonClicked(){
     userData.addQueryItem("email",email);
 
     manager->post(request,userData.query(QUrl::FullyEncoded).toUtf8());
+    Loader->closeDialog();
 }
 
 
@@ -93,6 +97,7 @@ void Welcome::handleReply(QNetworkReply *reply){
             // initialize the user
             User::initializeSystem();
             //creating user and saving in database
+
             User::createUser(this->email->text());
             closeWindow();
         }else{
@@ -120,6 +125,8 @@ void Welcome::handleReply(QNetworkReply *reply){
     }else{
         qDebug()<<reply->readAll();
     }
+
+
 }
 
 

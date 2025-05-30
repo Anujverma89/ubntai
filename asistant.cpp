@@ -15,43 +15,30 @@ Asistant::~Asistant(){
     delete ui;
 };
 
-void Asistant::makeRequest(Ui::MainWindow *ui) {
-    QNetworkAccessManager *manager = new QNetworkAccessManager(this);
-    connect(manager, &QNetworkAccessManager::finished, this, &Asistant::handleResponse);
 
-    QLabel *textdata =  new QLabel("");
-    this->ui->queryBox->setText("");
-    this->ui->scrollArea->setWidget(textdata);
+void Asistant::makeRequest(Ui::MainWindow *ui) {
+    auto *manager = new QNetworkAccessManager(this);
+    connect(manager, &QNetworkAccessManager::finished, this, &Asistant::handleResponse);
 
     QString question = ui->questionBox->text();
     qDebug() << "User Question: " << question;
 
-    QString apiKey = "AIzaSyBpvVYplRkFV3-XzQ0kfUnCYRnfyxIAVXM";
-    QString geminiUrl = QString("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=%1").arg(apiKey);
-
+    QUrl geminiUrl(urls::askQuestion);
     QNetworkRequest request(geminiUrl);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
-    // Correct JSON structure
+    // Build the same JSON you showed
     QJsonObject textPart;
-    textPart["text"] = question;
-
-    QJsonArray partsArray;
-    partsArray.append(textPart);
-
+    textPart["question"] = question;
+    QJsonArray partsArray { textPart };
     QJsonObject contentObject;
     contentObject["parts"] = partsArray;
+    QJsonArray contentsArray { contentObject };
+    QJsonObject root;
+    root["contents"] = contentsArray;
 
-    QJsonArray contentsArray;
-    contentsArray.append(contentObject);
-
-    QJsonObject json;
-    json["contents"] = contentsArray;
-
-    QJsonDocument jsonDoc(json);
-    QByteArray jsonData = jsonDoc.toJson();
-
-    manager->post(request, jsonData);
+    QJsonDocument doc(root);
+    manager->post(request, doc.toJson());
 }
 
 
@@ -65,6 +52,7 @@ void Asistant::handleResponse(QNetworkReply *reply) {
         loader->closeDialog();
 
         QByteArray responseData = reply->readAll();
+        qDebug()<<responseData;
         QJsonDocument doc = QJsonDocument::fromJson(responseData);
 
         if (!doc.isNull() && doc.isObject()) {

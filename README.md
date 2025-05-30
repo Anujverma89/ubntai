@@ -91,3 +91,8 @@ c) So install directly using app
 1) directory / can be found using isDir() return ture if dir()
 2) .gz / to work on /
 3) Log files / can be read easily 0 / can be found using isFile(); return true if file
+
+
+
+# In a registration flow : 
+    if user doesnot exists then only the new user is created and otp is sent else the user is logged in directly 

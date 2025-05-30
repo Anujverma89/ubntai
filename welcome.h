@@ -4,6 +4,7 @@
 #include <QLineEdit>
 #include <QNetworkReply>
 #include <QVBoxLayout>
+#include "loading.h"
 
 //this file basically does initialization of the app when it is installed for the first time in the system
 // feteches the already registered user or create new user if user doesnot exists

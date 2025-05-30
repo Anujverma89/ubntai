@@ -189,49 +189,100 @@ void Troubleshoot::populateError(QString errorstring) {
 
 
 
+// void Troubleshoot::callGeminiAPI(const QString &errorText) {
+//     Loading *troubleshootloader = new Loading();
+//     troubleshootloader->startLoading(nullptr,"Finding solution, Please wait !!");
+
+
+//     QNetworkAccessManager *manager = new QNetworkAccessManager();
+
+//     QString apiKey = "AIzaSyBpvVYplRkFV3-XzQ0kfUnCYRnfyxIAVXM";
+//     QString geminiUrl = QString("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=%1").arg(apiKey);
+
+//     QNetworkRequest request(geminiUrl);
+//     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+
+//     // Correct JSON structure
+//     QString combinedText = QString(
+//         "This error log contains a problem. I want you to give me three things strictly :\n"
+//             "1) Cause\n"
+//             "2) Solution\n"
+//             "3) Version in which the solution is applicable\n"
+//             "Return the result in JSON format only.\n\n"
+//             "Error: %1"
+//     ).arg(errorText);
+
+//     QJsonObject textPart;
+//     textPart["text"] = combinedText;
+
+
+//     QJsonArray partsArray;
+//     partsArray.append(textPart);
+
+//     QJsonObject contentObject;
+//     contentObject["parts"] = partsArray;
+
+//     QJsonArray contentsArray;
+//     contentsArray.append(contentObject);
+
+//     QJsonObject json;
+//     json["contents"] = contentsArray;
+
+//     QJsonDocument jsonDoc(json);
+//     QByteArray jsonData = jsonDoc.toJson();
+
+//     // manager->post(request, jsonData);
+
+    // QNetworkReply *reply = manager->post(request, jsonData);
+    // QObject::connect(reply, &QNetworkReply::finished, [reply, troubleshootloader]() {
+    //     if (reply->error() == QNetworkReply::NoError) {
+    //         QByteArray response = reply->readAll();
+    //         QJsonDocument responseDoc = QJsonDocument::fromJson(response);
+
+    //         QString text = "";
+    //         QJsonArray candidates = responseDoc["candidates"].toArray();
+    //         if (!candidates.isEmpty()) {
+    //             QJsonArray parts = candidates[0].toObject()["content"].toObject()["parts"].toArray();
+    //             if (!parts.isEmpty()) {
+    //                 text = parts[0].toObject()["text"].toString();
+    //             }
+    //         }
+
+    //         QStringList jsonText = text.split("\n");
+
+    //         // Print the raw Gemini response as plain text
+    //         // qDebug().noquote()<<jsonText[1];
+    //         // qDebug()<< "Gemini Response:\n" << jsonText;
+    //         troubleshootloader->closeDialog();
+    //         populateErrorResponse(jsonText[2],jsonText[3],jsonText[4]);
+    //     } else {
+    //         qDebug() << "Error calling Gemini API:" << reply->errorString();
+    //         troubleshootloader->closeDialog();
+    //     }
+    //     reply->deleteLater();
+    // });
+
+
+// }
+
+
 void Troubleshoot::callGeminiAPI(const QString &errorText) {
     Loading *troubleshootloader = new Loading();
     troubleshootloader->startLoading(nullptr,"Finding solution, Please wait !!");
 
-
     QNetworkAccessManager *manager = new QNetworkAccessManager();
 
-    QString apiKey = "AIzaSyBpvVYplRkFV3-XzQ0kfUnCYRnfyxIAVXM";
-    QString geminiUrl = QString("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=%1").arg(apiKey);
 
-    QNetworkRequest request(geminiUrl);
+    QUrl endpoint(urls::troubleShoot);
+    QNetworkRequest request(endpoint);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
-    // Correct JSON structure
-    QString combinedText = QString(
-        "This error log contains a problem. I want you to give me three things strictly :\n"
-            "1) Cause\n"
-            "2) Solution\n"
-            "3) Version in which the solution is applicable\n"
-            "Return the result in JSON format only.\n\n"
-            "Error: %1"
-    ).arg(errorText);
 
-    QJsonObject textPart;
-    textPart["text"] = combinedText;
-
-
-    QJsonArray partsArray;
-    partsArray.append(textPart);
-
-    QJsonObject contentObject;
-    contentObject["parts"] = partsArray;
-
-    QJsonArray contentsArray;
-    contentsArray.append(contentObject);
-
-    QJsonObject json;
-    json["contents"] = contentsArray;
-
-    QJsonDocument jsonDoc(json);
+    QJsonObject root;
+    root["error"] = errorText;
+    QJsonDocument jsonDoc(root);
     QByteArray jsonData = jsonDoc.toJson();
 
-    // manager->post(request, jsonData);
 
     QNetworkReply *reply = manager->post(request, jsonData);
     QObject::connect(reply, &QNetworkReply::finished, [reply, troubleshootloader]() {
@@ -250,21 +301,69 @@ void Troubleshoot::callGeminiAPI(const QString &errorText) {
 
             QStringList jsonText = text.split("\n");
 
-            // Print the raw Gemini response as plain text
-            // qDebug().noquote()<<jsonText[1];
-            // qDebug()<< "Gemini Response:\n" << jsonText;
+
             troubleshootloader->closeDialog();
-            populateErrorResponse(jsonText[2],jsonText[3],jsonText[4]);
+            if (jsonText.size() >= 4) {
+                populateErrorResponse(jsonText[2], jsonText[3], jsonText[4]);
+            } else {
+                populateErrorResponse(jsonText[2], jsonText[3], jsonText[4]);
+            }
         } else {
             qDebug() << "Error calling Gemini API:" << reply->errorString();
             troubleshootloader->closeDialog();
         }
         reply->deleteLater();
     });
-
-
 }
 
+
+// void Troubleshoot::callGeminiAPI(const QString &errorText) {
+//     Loading *troubleshootloader = new Loading();
+//     troubleshootloader->startLoading(nullptr, "Finding solution, please wait…");
+
+//     QNetworkAccessManager *manager = new QNetworkAccessManager();
+
+//     QUrl endpoint(urls::troubleShoot);
+//     QNetworkRequest request(endpoint);
+//     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+
+//     // Build request payload
+//     QJsonObject root;
+//     root["error"] = errorText;
+//     QJsonDocument jsonDoc(root);
+//     QByteArray jsonData = jsonDoc.toJson();
+
+//     // Fire off the POST
+//     QNetworkReply *reply = manager->post(request, jsonData);
+//     QObject::connect(reply, &QNetworkReply::finished, [reply, troubleshootloader]() {
+//         troubleshootloader->closeDialog();
+
+//         if (reply->error() != QNetworkReply::NoError) {
+//             qDebug() << "Error calling Gemini API:" << reply->errorString();
+//             reply->deleteLater();
+//             return;
+//         }
+
+//         // Read and parse JSON response
+//         const QByteArray response = reply->readAll();
+//         const QJsonDocument responseDoc = QJsonDocument::fromJson(response);
+//         const QJsonObject  obj = responseDoc.object();
+
+//         // Extract fields
+//         const QString cause    = obj.value("cause").toString(QStringLiteral("No cause provided"));
+//         const QString solution = obj.value("solution").toString(QStringLiteral("No solution provided"));
+//         const QString version  = obj.value("version").toString(QStringLiteral("No version provided"));
+
+//         // Populate your UI
+//         populateErrorResponse(cause, solution, version);
+
+//         reply->deleteLater();
+//     });
+// }
+
+
+
+// here we are showing the cause solution and version in which solution is applicable
 void Troubleshoot::populateErrorResponse(const QString &cause, const QString &solution, const QString &version) {
     // Create a new dialog window
     QDialog *errorDialog = new QDialog();
